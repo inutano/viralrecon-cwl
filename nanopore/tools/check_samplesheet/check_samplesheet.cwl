@@ -11,6 +11,7 @@ arguments:
   - $(inputs.platform)
 inputs:
   - id: script
+    label: "check_samplesheet.py"
     type: File
   - id: input
     type: File
