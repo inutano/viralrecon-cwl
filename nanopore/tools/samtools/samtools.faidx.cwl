@@ -2,13 +2,16 @@
 # Generated from: samtools faidx nCoV-2019.reference.fasta && cut -f 1,2 nCoV-2019.reference.fasta.fai > nCoV-2019.reference.fasta.sizes
 class: CommandLineTool
 cwlVersion: v1.0
-baseCommand: [samtools, faidx]
 requirements:
+  ShellCommandRequirement: {}
   InitialWorkDirRequirement:
     listing:
       - $(inputs.reference_fasta)
 arguments:
-  - $(inputs.reference_fasta)
+  - valueFrom: |-
+      samtools faidx $(inputs.reference_fasta.path) && \
+      cut -f 1,2 $(inputs.reference_fasta.basename).fai > $(inputs.reference_fasta.basename).sizes
+    shellQuote: false
 inputs:
   - id: reference_fasta
     type: File
