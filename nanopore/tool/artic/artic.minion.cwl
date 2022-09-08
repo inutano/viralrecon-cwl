@@ -56,6 +56,10 @@ inputs:
   - id: sample_name
     type: string
 outputs:
+  - id: sorted_bam
+    type: File
+    outputBinding:
+      glob: "$(inputs.sample_name).sorted.bam"
   - id: all-for-debugging
     type:
       type: array

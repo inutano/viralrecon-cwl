@@ -1,5 +1,7 @@
 cwlVersion: v1.0
 class: Workflow
+requirements:
+  StepInputExpressionRequirement: {}
 inputs:
   - id: SAMPLE_NAME
     type: string
@@ -41,15 +43,26 @@ steps:
       sequencing_summary: SEQUENCING_SUMMARY
       sample_name: SAMPLE_NAME
     out:
+      - sorted_bam
       - all-for-debugging
+  samtools.view:
+    run: ../tool/samtools/samtools.view.cwl
+    in:
+      input_bam: artic.minion/sorted_bam
+      sample_name: SAMPLE_NAME
+      output_name:
+        valueFrom: "$(inputs.sample_name).mapped.sorted.bam"
+    out:
+      - mapped_bam
+
 outputs:
   artic.guppyplex.fastq:
     type: File
     outputSource: artic.guppyplex/fastq
-  pigz:
+  pigz.fastq_gz:
     type: File
     outputSource: pigz/fastq_gz
-  nanoplot:
+  nanoplot.all:
       type:
         type: array
         items: [File, Directory]

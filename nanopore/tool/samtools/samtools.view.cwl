@@ -28,7 +28,7 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
-  - id: out
+  - id: mapped_bam
     type: stdout
 stdout: $(inputs.output_name)
 hints:
