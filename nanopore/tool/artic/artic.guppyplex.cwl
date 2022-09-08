@@ -10,9 +10,9 @@ arguments:
   - --max-length
   - $(inputs.max_length)
   - --directory
-  - $(inputs.directory)
+  - $(inputs.input_directory)
   - --output
-  - $(inputs.output_name)
+  - $(inputs.sample_name).fastq
 inputs:
   - id: min_length
     type: int
@@ -20,21 +20,15 @@ inputs:
   - id: max_length
     type: int
     default: 700
-  - id: directory
+  - id: input_directory
     type: Directory
-  - id: output_name
+  - id: sample_name
     type: string
 outputs:
-  - id: all-for-debugging
-    type:
-      type: array
-      items: [File, Directory]
+  - id: fastq
+    type: File
     outputBinding:
-      glob: "*"
-#  - id: output
-#    type: File
-#    outputBinding:
-#      glob: "$(inputs.output_name)"
+      glob: "$(inputs.sample_name).fastq"
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/artic:1.2.2--pyhdfd78af_0
