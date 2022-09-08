@@ -13,6 +13,8 @@ inputs:
     type: Directory
   - id: SEQUENCING_SUMMARY
     type: File
+  - id: PRIMER_BED
+    type: File
 
 steps:
   artic.guppyplex:
@@ -44,6 +46,7 @@ steps:
       sample_name: SAMPLE_NAME
     out:
       - sorted_bam
+      - primertrimmed_sorted_bam
       - all-for-debugging
   samtools.view:
     run: ../tool/samtools/samtools.view.cwl
@@ -54,6 +57,20 @@ steps:
         valueFrom: "$(inputs.sample_name).mapped.sorted.bam"
     out:
       - mapped_bam
+  collapse_primer_bed:
+    run: ../tool/collapse_primer_bed/collapse_primer_bed.cwl
+    in:
+      input_bed: PRIMER_BED
+    out:
+      - collapsed_bed
+  mosdepth.amplicon:
+    run: ../tool/mosdepth/mosdepth.amplicon.cwl
+    in:
+      by: collapse_primer_bed/collapsed_bed
+      input_label: SAMPLE_NAME
+      input_bam: artic.minion/primertrimmed_sorted_bam
+    out:
+      - all-for-debugging
 
 outputs:
   artic.guppyplex.fastq:

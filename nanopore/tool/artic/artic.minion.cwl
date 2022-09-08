@@ -60,6 +60,12 @@ outputs:
     type: File
     outputBinding:
       glob: "$(inputs.sample_name).sorted.bam"
+  - id: primertrimmed_sorted_bam
+    type: File
+    secondaryFiles:
+      - .bai
+    outputBinding:
+      glob: "$(inputs.sample_name).primertrimmed.rg.sorted.bam"
   - id: all-for-debugging
     type:
       type: array

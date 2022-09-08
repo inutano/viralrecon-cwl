@@ -9,25 +9,31 @@ arguments:
   - $(inputs.left_primer_suffix)
   - --right_primer_suffix
   - $(inputs.right_primer_suffix)
-  - $(inputs.input)
-  - $(inputs.output)
+  - $(inputs.input_bed)
+  - $(inputs.output_bed_name)
 inputs:
   - id: script
-    label: "collapse_primer_bed.py"
     type: File
+    default:
+      class: File
+      location: collapse_primer_bed.py
   - id: left_primer_suffix
     type: string
     default: _LEFT
   - id: right_primer_suffix
     type: string
     default: _RIGHT
-  - id: input
+  - id: input_bed
     type: File
     label: "nCoV-2019_primer.bed"
-  - id: output
+  - id: output_bed_name
     type: string
     default: nCoV_2019_primer_collapsed.bed
 outputs:
+  - id: collapsed_bed
+    type: File
+    outputBinding:
+      glob: $(inputs.output_bed_name)
   - id: all-for-debugging
     type:
       type: array
