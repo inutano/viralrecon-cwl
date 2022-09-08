@@ -70,14 +70,14 @@ steps:
       input_label: SAMPLE_NAME
       input_bam: artic.minion/primertrimmed_sorted_bam
     out:
-      - all-for-debugging
+      - all
   mosdepth.genome:
     run: ../tool/mosdepth/mosdepth.genome.cwl
     in:
       sample_name: SAMPLE_NAME
       input_bam: artic.minion/primertrimmed_sorted_bam
     out:
-      - all-for-debugging
+      - all
 
 outputs:
   artic.guppyplex.fastq:
@@ -87,6 +87,16 @@ outputs:
     type: File
     outputSource: pigz/fastq_gz
   nanoplot.all:
+      type:
+        type: array
+        items: [File, Directory]
+      outputSource: nanoplot/all_outputs
+  mosdepth.amplicon.all:
+      type:
+        type: array
+        items: [File, Directory]
+      outputSource: nanoplot/all_outputs
+  mosdepth.genome.all:
       type:
         type: array
         items: [File, Directory]

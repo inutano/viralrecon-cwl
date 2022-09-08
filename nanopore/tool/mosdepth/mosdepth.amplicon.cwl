@@ -30,7 +30,7 @@ inputs:
     secondaryFiles:
       - .bai
 outputs:
-  - id: all-for-debugging
+  - id: all
     type:
       type: array
       items: [File, Directory]
