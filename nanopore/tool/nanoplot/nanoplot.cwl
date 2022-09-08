@@ -7,15 +7,15 @@ arguments:
   - -t
   - $(inputs.threads)
   - --fastq
-  - $(inputs.fastq)
+  - $(inputs.input_fastq)
 inputs:
   - id: threads
     type: int
     default: 2
-  - id: fastq
+  - id: input_fastq
     type: File
 outputs:
-  - id: all-for-debugging
+  - id: all_outputs
     type:
       type: array
       items: [File, Directory]

@@ -26,6 +26,12 @@ steps:
       input_fastq: artic.guppyplex/fastq
     out:
       - fastq_gz
+  nanoplot:
+    run: ../tool/nanoplot/nanoplot.cwl
+    in:
+      input_fastq: pigz/fastq_gz
+    out:
+      - all_outputs
   artic.minion:
     run: ../tool/artic/artic.minion.cwl
     in:
@@ -43,3 +49,8 @@ outputs:
   pigz:
     type: File
     outputSource: pigz/fastq_gz
+  nanoplot:
+      type:
+        type: array
+        items: [File, Directory]
+      outputSource: nanoplot/all_outputs
