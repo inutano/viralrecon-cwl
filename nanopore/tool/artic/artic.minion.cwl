@@ -31,7 +31,7 @@ arguments:
   - --sequencing-summary
   - $(inputs.sequencing_summary)
   - $(inputs.scheme_label)
-  - $(inputs.input_label)
+  - $(inputs.sample_name)
 inputs:
   - id: normalise
     type: int
@@ -53,7 +53,7 @@ inputs:
   - id: scheme_label
     type: string
     default: nCoV-2019
-  - id: input_label
+  - id: sample_name
     type: string
 outputs:
   - id: all-for-debugging
