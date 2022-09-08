@@ -71,6 +71,13 @@ steps:
       input_bam: artic.minion/primertrimmed_sorted_bam
     out:
       - all-for-debugging
+  mosdepth.genome:
+    run: ../tool/mosdepth/mosdepth.genome.cwl
+    in:
+      sample_name: SAMPLE_NAME
+      input_bam: artic.minion/primertrimmed_sorted_bam
+    out:
+      - all-for-debugging
 
 outputs:
   artic.guppyplex.fastq:

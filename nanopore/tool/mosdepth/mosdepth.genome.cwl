@@ -9,7 +9,7 @@ arguments:
   - --fast-mode
   - --by
   - $(inputs.by)
-  - $(inputs.input_label)
+  - $(inputs.sample_name)
   - $(inputs.input_bam)
 inputs:
   - id: threads
@@ -18,7 +18,7 @@ inputs:
   - id: by
     type: int
     default: 200
-  - id: input_label
+  - id: sample_name
     type: string
   - id: input_bam
     type: File
