@@ -31,6 +31,14 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
+  - id: config
+    type: File
+    outputBinding:
+      glob: "snpeff.config"
+  - id: datadir
+    type: Directory
+    outputBinding:
+      glob: "snpeff_db"
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/snpeff:5.0--hdfd78af_1

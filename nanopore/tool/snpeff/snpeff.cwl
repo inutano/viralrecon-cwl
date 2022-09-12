@@ -12,7 +12,7 @@ arguments:
   - $(inputs.dataDir)
   - $(inputs.input_vcf)
   - -csvStats
-  - $(inputs.output_csv)
+  - $(inputs.sample_name).snpeff.csv
 inputs:
   - id: reference_name
     type: string
@@ -22,9 +22,7 @@ inputs:
     type: Directory
   - id: input_vcf
     type: File
-  - id: output_csv
-    type: string
-  - id: output_name
+  - id: sample_name
     type: string
 outputs:
   - id: all-for-debugging
@@ -33,9 +31,9 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
-  - id: out
+  - id: vcf
     type: stdout
-stdout: $(inputs.output_name)
+stdout: $(inputs.sample_name).snpeff.vcf
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/snpeff:5.0--hdfd78af_1

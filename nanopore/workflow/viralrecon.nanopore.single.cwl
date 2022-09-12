@@ -15,6 +15,13 @@ inputs:
     type: File
   - id: PRIMER_BED
     type: File
+  - id: REFERENCE_GENOME_PREFIX
+    type: string
+    default: "nCoV-2019.reference"
+  - id: SNPEFF_CONFIG
+    type: File
+  - id: SNPEFF_DATADIR
+    type: Directory
 
 steps:
   artic.guppyplex:
@@ -125,6 +132,24 @@ steps:
         valueFrom: $(inputs.sample_name).bcftools_stats.txt
     out:
       - out
+  snpeff:
+    run: ../tool/snpeff/snpeff.cwl
+    in:
+      reference_name: REFERENCE_GENOME_PREFIX
+      config: SNPEFF_CONFIG
+      dataDir: SNPEFF_DATADIR
+      input_vcf: vcfuniq/uniq_vcf
+      sample_name: SAMPLE_NAME
+    out:
+      - vcf
+  snpsift:
+    run: ../tool/snpsift/snpsift.cwl
+    in:
+      input_vcf: snpeff/vcf
+      sample_name: SAMPLE_NAME
+    out:
+      - out
+  
 
 outputs:
   artic.guppyplex.fastq:

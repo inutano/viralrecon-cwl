@@ -40,7 +40,7 @@ arguments:
 inputs:
   - id: input_vcf
     type: File
-  - id: output_name # SAMPLE_01.snpsift.txt
+  - id: sample_name
     type: string
 outputs:
   - id: all-for-debugging
@@ -51,7 +51,7 @@ outputs:
       glob: "*"
   - id: out
     type: stdout
-stdout: $(inputs.output_name)
+stdout: $(inputs.sample_name).snpsift.txt
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/snpsift:4.3.1t--hdfd78af_3
