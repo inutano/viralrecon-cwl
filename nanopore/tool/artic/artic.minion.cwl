@@ -66,6 +66,12 @@ outputs:
       - .bai
     outputBinding:
       glob: "$(inputs.sample_name).primertrimmed.rg.sorted.bam"
+  - id: pass_vcf
+    type: File
+    secondaryFiles:
+      - .tbi
+    outputBinding:
+      glob: "$(inputs.sample_name).pass.vcf.gz"
   - id: all-for-debugging
     type:
       type: array

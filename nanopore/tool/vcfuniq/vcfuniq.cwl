@@ -12,7 +12,7 @@ inputs:
     type: File
     secondaryFiles:
       - .tbi
-  - id: output_name
+  - id: sample_name
     type: string
 outputs:
   - id: all-for-debugging
@@ -21,9 +21,9 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
-  - id: out
+  - id: uniq_vcf
     type: stdout
-stdout: $(inputs.output_name).unique.vcf.gz
+stdout: $(inputs.sample_name).unique.vcf.gz
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/vcflib:1.0.3--hecb563c_1

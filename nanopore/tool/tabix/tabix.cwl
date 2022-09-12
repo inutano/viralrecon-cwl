@@ -25,6 +25,10 @@ inputs:
   - id: input_file
     type: File
 outputs:
+  - id: index
+    type: File
+    outputBinding:
+      glob: "$(inputs.input_file.basename).tbi"
   - id: all-for-debugging
     type:
       type: array

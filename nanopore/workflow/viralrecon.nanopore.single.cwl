@@ -47,6 +47,7 @@ steps:
     out:
       - sorted_bam
       - primertrimmed_sorted_bam
+      - pass_vcf
       - all-for-debugging
   samtools.view:
     run: ../tool/samtools/samtools.view.cwl
@@ -78,6 +79,31 @@ steps:
       input_bam: artic.minion/primertrimmed_sorted_bam
     out:
       - all
+  vcfuniq:
+    run: ../tool/vcfuniq/vcfuniq.cwl
+    in:
+      input_vcf: artic.minion/pass_vcf
+      sample_name: SAMPLE_NAME
+    out:
+      - uniq_vcf
+  tabix:
+    run: ../tool/tabix/tabix.cwl
+    in:
+      input_file: vcfuniq/uniq_vcf
+    out:
+      - index
+  bcftools.stats:
+    run: ../tool/bcftools/bcftools.stats.cwl
+    in:
+      - id: input_vcf
+        source: vcfuniq/uniq_vcf
+        secondaryFiles:
+          - tabix/index
+      sample_name: SAMPLE_NAME
+      output_name:
+        valueFrom: $(inputs.sample_name).bcftools_stats.txt
+    out:
+      - out
 
 outputs:
   artic.guppyplex.fastq:
@@ -86,18 +112,18 @@ outputs:
   pigz.fastq_gz:
     type: File
     outputSource: pigz/fastq_gz
-  nanoplot.all:
-      type:
-        type: array
-        items: [File, Directory]
-      outputSource: nanoplot/all_outputs
-  mosdepth.amplicon.all:
-      type:
-        type: array
-        items: [File, Directory]
-      outputSource: nanoplot/all_outputs
-  mosdepth.genome.all:
-      type:
-        type: array
-        items: [File, Directory]
-      outputSource: nanoplot/all_outputs
+  # nanoplot.all:
+  #     type:
+  #       type: array
+  #       items: [File, Directory]
+  #     outputSource: nanoplot/all_outputs
+  # mosdepth.amplicon.all:
+  #     type:
+  #       type: array
+  #       items: [File, Directory]
+  #     outputSource: nanoplot/all_outputs
+  # mosdepth.genome.all:
+  #     type:
+  #       type: array
+  #       items: [File, Directory]
+  #     outputSource: nanoplot/all_outputs
