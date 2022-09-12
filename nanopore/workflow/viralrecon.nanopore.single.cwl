@@ -55,6 +55,7 @@ steps:
       - sorted_bam
       - primertrimmed_sorted_bam
       - pass_vcf
+      - consensus_fasta
       - all-for-debugging
   samtools.view:
     run: ../tool/samtools/samtools.view.cwl
@@ -149,7 +150,6 @@ steps:
       sample_name: SAMPLE_NAME
     out:
       - out
-  
 
 outputs:
   artic.guppyplex.fastq:
@@ -158,6 +158,9 @@ outputs:
   pigz.fastq_gz:
     type: File
     outputSource: pigz/fastq_gz
+  consensus_fasta:
+    type: File
+    outputSource: artic.minion/consensus_fasta
   # nanoplot.all:
   #     type:
   #       type: array

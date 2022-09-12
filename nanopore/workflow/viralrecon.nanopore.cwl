@@ -95,6 +95,18 @@ steps:
       SNPEFF_DATADIR: snpeff.build/datadir
     out:
       - artic.guppyplex.fastq
+      - consensus_fasta
+
+  quast:
+    run: ../tool/quast/quast.cwl
+    in:
+      reference_genome_fasta: get_reference_fasta/fasta
+      reference_feature_gff: get_annotation_gff/gff
+      input_files:
+        source: [viralrecon/consensus_fasta]
+        linkMerge: merge_flattened
+    out:
+      - quast_dir
 
 outputs:
   fastq:

@@ -72,6 +72,10 @@ outputs:
       - .tbi
     outputBinding:
       glob: "$(inputs.sample_name).pass.vcf.gz"
+  - id: consensus_fasta
+    type: File
+    outputBinding:
+      glob: "$(inputs.sample_name).consensus.fasta"
   - id: all-for-debugging
     type:
       type: array

@@ -33,6 +33,14 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
+  - id: quast_dir
+    type: Directory
+    outputBinding:
+      glob: "quast"
+  - id: report
+    type: File
+    outputBinding:
+      glob: "**/report.tsv"
 #  - id: output_dir
 #    type: File
 #    outputBinding:
