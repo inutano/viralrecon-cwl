@@ -92,13 +92,34 @@ steps:
       input_file: vcfuniq/uniq_vcf
     out:
       - index
+  to_vcf_with_index:
+    in:
+      vcf: vcfuniq/uniq_vcf
+      index: tabix/index
+    out:
+      - vcf_with_index
+    run:
+      class: CommandLineTool
+      requirements:
+        InitialWorkDirRequirement:
+          listing:
+            - entry: $(inputs.vcf)
+            - entry: $(inputs.index)
+      baseCommand: "true"
+      inputs:
+        vcf: File
+        index: File
+      outputs:
+        vcf_with_index:
+          type: File
+          outputBinding:
+            glob: $(inputs.vcf.basename)
+          secondaryFiles:
+            - .tbi
   bcftools.stats:
     run: ../tool/bcftools/bcftools.stats.cwl
     in:
-      - id: input_vcf
-        source: vcfuniq/uniq_vcf
-        secondaryFiles:
-          - tabix/index
+      input_vcf: to_vcf_with_index/vcf_with_index
       sample_name: SAMPLE_NAME
       output_name:
         valueFrom: $(inputs.sample_name).bcftools_stats.txt
@@ -127,3 +148,6 @@ outputs:
   #       type: array
   #       items: [File, Directory]
   #     outputSource: nanoplot/all_outputs
+  bcftoos.stats.txt:
+    type: File
+    outputSource: bcftools.stats/out
