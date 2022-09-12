@@ -151,6 +151,15 @@ steps:
     out:
       - out
 
+  pangolin:
+    run: ../tool/pangolin/pangolin.cwl
+    in:
+      consensus_fasta: artic.minion/consensus_fasta
+      outfile_name: SAMPLE_NAME
+    out:
+      - csv
+
+
 outputs:
   artic.guppyplex.fastq:
     type: File

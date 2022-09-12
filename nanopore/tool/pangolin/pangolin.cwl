@@ -24,10 +24,10 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
-#  - id: outfile
-#    type: File
-#    outputBinding:
-#      glob: "$(inputs.outfile_name)"
+  - id: csv
+    type: File
+    outputBinding:
+      glob: "$(inputs.outfile_name)"
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/pangolin:4.1.1--pyhdfd78af_0
