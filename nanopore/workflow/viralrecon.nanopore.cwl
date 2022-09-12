@@ -3,17 +3,30 @@ class: Workflow
 requirements:
   SubworkflowFeatureRequirement: {}
   StepInputExpressionRequirement: {}
+  ScatterFeatureRequirement: {}
 inputs:
+  - id: LIST_SAMPLE_NAME
+    type: string[]
+    default:
+      - SAMPLE_01
   - id: FASTQ_DIRECTORY
-    type: Directory
-  - id: SCHEME_DIRECTORY
     type: Directory
   - id: FAST5_DIRECTORY
     type: Directory
   - id: SEQUENCING_SUMMARY
     type: File
-  - id: PRIMER_BED
-    type: File
+  # - id: FASTQ_DIRECTORY_S3_URL
+  #   type: string
+  #   default: "s3://nf-core-awsmegatests/viralrecon/input_data/minion_test/fastq_pass"
+  # - id: FAST5_DIRECTORY_S3_URL
+  #   type: string
+  #   default: "s3://nf-core-awsmegatests/viralrecon/input_data/minion_test/fast5_pass"
+  # - id: SEQUENCING_SUMMARY_S3_URL
+  #   type: string
+  #   default: "s3://nf-core-awsmegatests/viralrecon/input_data/minion_test/sequencing_summary.txt"
+  - id: SCHEME_GITHUB_REPO_URL
+    type: string
+    default: "https://github.com/artic-network/artic-ncov2019"
   - id: GENOME_VERSION
     type: string
     default: 'nCoV-2019.reference'
@@ -28,6 +41,97 @@ inputs:
     default: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/nextclade_sars-cov-2_MN908947_2022-06-14T12_00_00Z.tar.gz"
 
 steps:
+  # get_fastq_dir:
+  #   in:
+  #     url: FASTQ_DIRECTORY_S3_URL
+  #   out:
+  #     - dir
+  #   run:
+  #     class: CommandLineTool
+  #     hints:
+  #       - class: DockerRequirement
+  #         dockerPull: amazon/aws-cli:2.7.31
+  #     arguments:
+  #       - aws
+  #       - s3
+  #       - mirror
+  #       - $(inputs.url)
+  #       - '.'
+  #     inputs:
+  #       url: string
+  #     outputs:
+  #       - id: dir
+  #         type: Directory
+  #         outputBinding:
+  #           glob: "fastq_*"
+  #
+  # get_fast5_dir:
+  #   in:
+  #     url: FAST5_DIRECTORY_S3_URL
+  #   out:
+  #     - dir
+  #   run:
+  #     class: CommandLineTool
+  #     hints:
+  #       - class: DockerRequirement
+  #         dockerPull: amazon/aws-cli:2.7.31
+  #     arguments:
+  #       - aws
+  #       - s3
+  #       - mirror
+  #       - $(inputs.url)
+  #       - '.'
+  #     inputs:
+  #       url: string
+  #     outputs:
+  #       - id: dir
+  #         type: Directory
+  #         outputBinding:
+  #           glob: "fast5_*"
+  #
+  # get_sequencing_summary:
+  #   in:
+  #     url: SEQUENCING_SUMMARY_S3_URL
+  #   out:
+  #     - sequencing_summary
+  #   run:
+  #     class: CommandLineTool
+  #     hints:
+  #       - class: DockerRequirement
+  #         dockerPull: amazon/aws-cli:2.7.31
+  #     arguments:
+  #       - aws
+  #       - s3
+  #       - mirror
+  #       - $(inputs.url)
+  #       - .
+  #     inputs:
+  #       url: string
+  #     outputs:
+  #       - id: sequencing_summary
+  #         type: File
+  #         outputBinding:
+  #           glob: "sequencing_summary.txt"
+
+  get_primer_scheme:
+    in:
+      url: SCHEME_GITHUB_REPO_URL
+    out:
+      - scheme_dir
+    run:
+      class: CommandLineTool
+      arguments:
+        - git
+        - clone
+        - $(inputs.url)
+      inputs:
+        url: string
+      outputs:
+        - id: scheme_dir
+          type: Directory
+          outputBinding:
+            glob: "**/primer_schemes"
+
   get_annotation_gff:
     in:
       gzip_url: ANNOTATION_GFF_GZ_URL
@@ -107,14 +211,17 @@ steps:
 
   viralrecon:
     run: viralrecon.nanopore.single.cwl
+    scatter: SAMPLE_NAME
     in:
-      SAMPLE_NAME:
-        valueFrom: 'SAMPLE_01'
+      SAMPLE_NAME: LIST_SAMPLE_NAME
+      # FASTQ_DIRECTORY: get_fastq_dir/dir
+      # FAST5_DIRECTORY: get_fast5_dir/dir
+      # SEQUENCING_SUMMARY: get_sequencing_summary/sequencing_summary
+      # SCHEME_DIRECTORY: get_primer_scheme/scheme_dir
       FASTQ_DIRECTORY: FASTQ_DIRECTORY
-      SCHEME_DIRECTORY: SCHEME_DIRECTORY
       FAST5_DIRECTORY: FAST5_DIRECTORY
       SEQUENCING_SUMMARY: SEQUENCING_SUMMARY
-      PRIMER_BED: PRIMER_BED
+      SCHEME_DIRECTORY: get_primer_scheme/scheme_dir
       SNPEFF_CONFIG: snpeff.build/config
       SNPEFF_DATADIR: snpeff.build/datadir
       NEXTCLADE_DATASET: get_nextclade_dataset/dataset
@@ -135,5 +242,5 @@ steps:
 
 outputs:
   fastq:
-    type: File
+    type: File[]
     outputSource: viralrecon/artic.guppyplex.fastq

@@ -13,8 +13,6 @@ inputs:
     type: Directory
   - id: SEQUENCING_SUMMARY
     type: File
-  - id: PRIMER_BED
-    type: File
   - id: REFERENCE_GENOME_PREFIX
     type: string
     default: "nCoV-2019.reference"
@@ -68,10 +66,27 @@ steps:
         valueFrom: "$(inputs.sample_name).mapped.sorted.bam"
     out:
       - mapped_bam
+
+  extract_primer_bed:
+    in:
+      dir: SCHEME_DIRECTORY
+    out:
+      - primer_bed
+    run:
+      class: CommandLineTool
+      baseCommand: 'true'
+      inputs:
+        dir: Directory
+      outputs:
+        - id: primer_bed
+          type: File
+          outputBinding:
+            glob: "$(inputs.dir)/**/nCoV-2019.primer.bed"
+
   collapse_primer_bed:
     run: ../tool/collapse_primer_bed/collapse_primer_bed.cwl
     in:
-      input_bed: PRIMER_BED
+      input_bed: extract_primer_bed/primer_bed
     out:
       - collapsed_bed
   mosdepth.amplicon:
