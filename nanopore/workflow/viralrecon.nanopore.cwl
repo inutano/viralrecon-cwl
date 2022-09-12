@@ -23,6 +23,9 @@ inputs:
   - id: REFERENCE_FASTA_URL
     type: string
     default: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/primer_schemes/artic/nCoV-2019/V1200/nCoV-2019.reference.fasta"
+  - id: NEXTCLADE_TARBALL_URL
+    type: string
+    default: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/nextclade_sars-cov-2_MN908947_2022-06-14T12_00_00Z.tar.gz"
 
 steps:
   get_annotation_gff:
@@ -70,6 +73,27 @@ steps:
           outputBinding:
             glob: "reference.fasta"
 
+  get_nextclade_dataset:
+    in:
+      url: NEXTCLADE_TARBALL_URL
+    out:
+      - dataset
+    run:
+      class: CommandLineTool
+      requirements:
+        ShellCommandRequirement: {}
+      arguments:
+        - valueFrom: |-
+            curl -s -L --output - $(inputs.url) | tar x
+          shellQuote: False
+      inputs:
+        url: string
+      outputs:
+        - id: dataset
+          type: Directory
+          outputBinding:
+            glob: "nextclade_*"
+
   snpeff.build:
     run: ../tool/snpeff/snpeff.build.cwl
     in:
@@ -93,6 +117,7 @@ steps:
       PRIMER_BED: PRIMER_BED
       SNPEFF_CONFIG: snpeff.build/config
       SNPEFF_DATADIR: snpeff.build/datadir
+      NEXTCLADE_DATASET: get_nextclade_dataset/dataset
     out:
       - artic.guppyplex.fastq
       - consensus_fasta

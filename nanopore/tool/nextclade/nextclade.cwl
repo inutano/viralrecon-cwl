@@ -9,7 +9,7 @@ arguments:
   - --input-dataset
   - $(inputs.input_dataset)
   - --output-all
-  - .
+  - $(inputs.output_dirname)
   - --output-basename
   - $(inputs.output_basename)
   - $(inputs.consensus_fasta)
@@ -19,6 +19,9 @@ inputs:
     default: 2
   - id: input_dataset
     type: Directory
+  - id: output_dirname
+    type: string
+    default: nextclade_out
   - id: output_basename
     type: string
   - id: consensus_fasta
@@ -30,14 +33,10 @@ outputs:
       items: [File, Directory]
     outputBinding:
       glob: "*"
-#  - id: output_all
-#    type: File
-#    outputBinding:
-#      glob: "$(inputs.output_all_name)"
-#  - id: output_basename
-#    type: File
-#    outputBinding:
-#      glob: "$(inputs.output_basename_name)"
+  - id: out
+    type: Directory
+    outputBinding:
+      glob: "$(inputs.output_dirname)"
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/biocontainers/nextclade:2.2.0--h9ee0642_0

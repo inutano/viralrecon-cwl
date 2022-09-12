@@ -22,6 +22,8 @@ inputs:
     type: File
   - id: SNPEFF_DATADIR
     type: Directory
+  - id: NEXTCLADE_DATASET
+    type: Directory
 
 steps:
   artic.guppyplex:
@@ -158,6 +160,15 @@ steps:
       outfile_name: SAMPLE_NAME
     out:
       - csv
+
+  nextclade:
+    run: ../tool/nextclade/nextclade.cwl
+    in:
+      input_dataset: NEXTCLADE_DATASET
+      output_basename: SAMPLE_NAME
+      consensus_fasta: artic.minion/consensus_fasta
+    out:
+      - out
 
 
 outputs:
