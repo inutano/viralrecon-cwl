@@ -1,0 +1,16 @@
+SAMPLE_NAME: SAMPLE_01
+FASTQ_DIRECTORY:
+  class: Directory
+  location: ../data/fastq/barcode01
+SCHEME_DIRECTORY:
+  class: Directory
+  location: ../data/artic-ncov2019/primer_schemes
+FAST5_DIRECTORY:
+  class: Directory
+  location: ../data/fast5/barcode01
+SEQUENCING_SUMMARY:
+  class: File
+  location: ../data/sequencing_summary.txt
+PRIMER_BED:
+  class: File
+  location: ../data/nCoV-2019.primer.bed
