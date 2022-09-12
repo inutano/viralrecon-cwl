@@ -1,0 +1,16 @@
+NEXTCLADE_TARBALL_URL: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/nextclade_sars-cov-2_MN908947_2022-06-14T12_00_00Z.tar.gz"  # default value of type "string".
+REFERENCE_FASTA_URL: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/primer_schemes/artic/nCoV-2019/V1200/nCoV-2019.reference.fasta"  # default value of type "string".
+ANNOTATION_GFF_GZ_URL: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/GCA_009858895.3_ASM985889v3_genomic.200409.gff.gz"  # default value of type "string".
+GENOME_VERSION: 'nCoV-2019.reference'  # default value of type "string".
+SCHEME_GITHUB_REPO_URL: "https://github.com/artic-network/artic-ncov2019"  # default value of type "string".
+SEQUENCING_SUMMARY:  # type "File"
+    class: File
+    path: ../data/sequencing_summary.txt
+FAST5_DIRECTORY:  # type "Directory"
+    class: Directory
+    path: ../data/fast5_pass
+FASTQ_DIRECTORY:  # type "Directory"
+    class: Directory
+    path: ../data/fastq_pass
+LIST_SAMPLE_NAME:  # array of type "string"
+  - SAMPLE_01
