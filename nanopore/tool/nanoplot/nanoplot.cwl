@@ -15,7 +15,7 @@ inputs:
   - id: input_fastq
     type: File
 outputs:
-  - id: all_outputs
+  - id: all
     type:
       type: array
       items: [File, Directory]

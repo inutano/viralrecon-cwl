@@ -5,7 +5,7 @@ cwlVersion: v1.0
 baseCommand: snpEff
 arguments:
   - -Xmx6g
-  - $(inputs.reference_name)
+  - $(inputs.reference_name).reference
   - -config
   - $(inputs.config)
   - -dataDir

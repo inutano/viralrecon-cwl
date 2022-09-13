@@ -9,6 +9,10 @@ inputs:
     type: string[]
     default:
       - SAMPLE_01
+  - id: LIST_BARCODE_NAME
+    type: string[]
+    default:
+      - barcode01
   - id: FASTQ_DIRECTORY
     type: Directory
   - id: FAST5_DIRECTORY
@@ -24,9 +28,6 @@ inputs:
   # - id: SEQUENCING_SUMMARY_S3_URL
   #   type: string
   #   default: "s3://nf-core-awsmegatests/viralrecon/input_data/minion_test/sequencing_summary.txt"
-  - id: SCHEME_GITHUB_REPO_URL
-    type: string
-    default: "https://github.com/artic-network/artic-ncov2019"
   - id: GENOME_VERSION
     type: string
     default: 'nCoV-2019.reference'
@@ -41,6 +42,7 @@ inputs:
     default: "https://github.com/nf-core/test-datasets/raw/viralrecon/genome/MN908947.3/nextclade_sars-cov-2_MN908947_2022-06-14T12_00_00Z.tar.gz"
 
 steps:
+  # awscli requires user credential: download data by setup.sh for now
   # get_fastq_dir:
   #   in:
   #     url: FASTQ_DIRECTORY_S3_URL
@@ -114,8 +116,7 @@ steps:
   #           glob: "sequencing_summary.txt"
 
   get_primer_scheme:
-    in:
-      url: SCHEME_GITHUB_REPO_URL
+    in: {}
     out:
       - scheme_dir
     run:
@@ -123,14 +124,17 @@ steps:
       arguments:
         - git
         - clone
+        - --depth=1
         - $(inputs.url)
       inputs:
-        url: string
+        url:
+          type: string
+          default: "https://github.com/artic-network/artic-ncov2019"
       outputs:
         - id: scheme_dir
           type: Directory
           outputBinding:
-            glob: "**/primer_schemes"
+            glob: "artic-ncov2019/primer_schemes"
 
   get_annotation_gff:
     in:
@@ -211,9 +215,11 @@ steps:
 
   viralrecon:
     run: viralrecon.nanopore.single.cwl
-    scatter: SAMPLE_NAME
+    scatter: [SAMPLE_NAME, BARCODE_NAME]
+    scatterMethod: dotproduct
     in:
       SAMPLE_NAME: LIST_SAMPLE_NAME
+      BARCODE_NAME: LIST_BARCODE_NAME
       # FASTQ_DIRECTORY: get_fastq_dir/dir
       # FAST5_DIRECTORY: get_fast5_dir/dir
       # SEQUENCING_SUMMARY: get_sequencing_summary/sequencing_summary
@@ -226,8 +232,14 @@ steps:
       SNPEFF_DATADIR: snpeff.build/datadir
       NEXTCLADE_DATASET: get_nextclade_dataset/dataset
     out:
-      - artic.guppyplex.fastq
       - consensus_fasta
+      - nanoplot.all
+      - mosdepth.amplicon.all
+      - mosdepth.genome.all
+      - bcftoos.stats.txt
+      - snpsift.out
+      - pangolin.csv
+      - nextclade.out
 
   quast:
     run: ../tool/quast/quast.cwl
@@ -241,6 +253,39 @@ steps:
       - quast_dir
 
 outputs:
-  fastq:
+  nanoplot.all:
+    type:
+      type: array
+      items:
+        type: array
+        items: [File, Directory]
+    outputSource: viralrecon/nanoplot.all
+  mosdepth.amplicon.all:
+    type:
+      type: array
+      items:
+        type: array
+        items: [File, Directory]
+    outputSource: viralrecon/mosdepth.amplicon.all
+  mosdepth.genome.all:
+    type:
+      type: array
+      items:
+        type: array
+        items: [File, Directory]
+    outputSource: viralrecon/mosdepth.genome.all
+  bcftoos.stats.txt:
     type: File[]
-    outputSource: viralrecon/artic.guppyplex.fastq
+    outputSource: viralrecon/bcftoos.stats.txt
+  snpsift.out:
+    type: File[]
+    outputSource: viralrecon/snpsift.out
+  pangolin.csv:
+    type: File[]
+    outputSource: viralrecon/pangolin.csv
+  nextclade.out:
+    type: Directory[]
+    outputSource: viralrecon/nextclade.out
+  quast.dir:
+    type: Directory
+    outputSource: quast/quast_dir

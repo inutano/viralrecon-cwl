@@ -10,7 +10,7 @@ arguments:
   - --max-length
   - $(inputs.max_length)
   - --directory
-  - $(inputs.input_directory)
+  - $(inputs.input_directory.path)/$(inputs.barcode_name)
   - --output
   - $(inputs.sample_name).fastq
 inputs:
@@ -23,6 +23,8 @@ inputs:
   - id: input_directory
     type: Directory
   - id: sample_name
+    type: string
+  - id: barcode_name
     type: string
 outputs:
   - id: fastq

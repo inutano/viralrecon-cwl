@@ -5,6 +5,8 @@ requirements:
 inputs:
   - id: SAMPLE_NAME
     type: string
+  - id: BARCODE_NAME
+    type: string
   - id: FASTQ_DIRECTORY
     type: Directory
   - id: SCHEME_DIRECTORY
@@ -15,7 +17,7 @@ inputs:
     type: File
   - id: REFERENCE_GENOME_PREFIX
     type: string
-    default: "nCoV-2019.reference"
+    default: "nCoV-2019"
   - id: SNPEFF_CONFIG
     type: File
   - id: SNPEFF_DATADIR
@@ -28,6 +30,7 @@ steps:
     run: ../tool/artic/artic.guppyplex.cwl
     in:
       input_directory: FASTQ_DIRECTORY
+      barcode_name: BARCODE_NAME
       sample_name: SAMPLE_NAME
     out:
       - fastq
@@ -42,7 +45,7 @@ steps:
     in:
       input_fastq: pigz/fastq_gz
     out:
-      - all_outputs
+      - all
   artic.minion:
     run: ../tool/artic/artic.minion.cwl
     in:
@@ -70,18 +73,27 @@ steps:
   extract_primer_bed:
     in:
       dir: SCHEME_DIRECTORY
+      prefix: REFERENCE_GENOME_PREFIX
     out:
       - primer_bed
     run:
       class: CommandLineTool
       baseCommand: 'true'
+      requirements:
+        InitialWorkDirRequirement:
+          listing:
+            - entry: $(inputs.dir)
       inputs:
         dir: Directory
+        prefix: string
+        version:
+          type: string
+          default: 'V3'
       outputs:
         - id: primer_bed
           type: File
           outputBinding:
-            glob: "$(inputs.dir)/**/nCoV-2019.primer.bed"
+            glob: "$(inputs.dir.path)/$(inputs.prefix)/$(inputs.version)/nCoV-2019.primer.bed"
 
   collapse_primer_bed:
     run: ../tool/collapse_primer_bed/collapse_primer_bed.cwl
@@ -187,30 +199,39 @@ steps:
 
 
 outputs:
-  artic.guppyplex.fastq:
-    type: File
-    outputSource: artic.guppyplex/fastq
-  pigz.fastq_gz:
-    type: File
-    outputSource: pigz/fastq_gz
+  # artic.guppyplex.fastq:
+  #   type: File
+  #   outputSource: artic.guppyplex/fastq
+  # pigz.fastq_gz:
+  #   type: File
+  #   outputSource: pigz/fastq_gz
   consensus_fasta:
     type: File
     outputSource: artic.minion/consensus_fasta
-  # nanoplot.all:
-  #     type:
-  #       type: array
-  #       items: [File, Directory]
-  #     outputSource: nanoplot/all_outputs
-  # mosdepth.amplicon.all:
-  #     type:
-  #       type: array
-  #       items: [File, Directory]
-  #     outputSource: nanoplot/all_outputs
-  # mosdepth.genome.all:
-  #     type:
-  #       type: array
-  #       items: [File, Directory]
-  #     outputSource: nanoplot/all_outputs
+  nanoplot.all:
+      type:
+        type: array
+        items: [File, Directory]
+      outputSource: nanoplot/all
+  mosdepth.amplicon.all:
+      type:
+        type: array
+        items: [File, Directory]
+      outputSource: mosdepth.amplicon/all
+  mosdepth.genome.all:
+      type:
+        type: array
+        items: [File, Directory]
+      outputSource: mosdepth.genome/all
   bcftoos.stats.txt:
     type: File
     outputSource: bcftools.stats/out
+  snpsift.out:
+    type: File
+    outputSource: snpsift/out
+  pangolin.csv:
+    type: File
+    outputSource: pangolin/csv
+  nextclade.out:
+    type: Directory
+    outputSource: nextclade/out
