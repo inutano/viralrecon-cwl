@@ -1,2 +1,3 @@
 nanopore/data
 nanopore/test/cache
+.DS_Store
